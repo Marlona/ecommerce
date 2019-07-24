@@ -6,36 +6,29 @@ import Header from './components/header/header.component'
 import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up.componets'
 import { auth, createUserProfileDocument } from './firebase/firebase.utils'
 import SignUp from './components/sign-up/sign-up.component'
+import { connect} from 'react-redux'
+import { setCurrentUser } from './redux/user/user.action'
 import './App.css';
 
 
 class App extends React.Component {
-  constructor() {
-    super()
-
-    this.state = {
-      currentUser: null
-    }
-  }
-
   unsubscibeFromAuth = null
 
   componentDidMount() {
+    const { setCurrentUser } = this.props 
+
     this.unsubscibeFromAuth = auth.onAuthStateChanged(async userAuth => {
      if (userAuth) {
        const userRef = await createUserProfileDocument(userAuth)
 
        userRef.onSnapshot(snapshot => {
-        this.setState({
-          currentUser: {
+            setCurrentUser({
             id: snapshot.id,
             ...snapshot.data()
-          }
-        })
-        console.log(this.state  )
+          })
       })
      }
-     this.setState({ currentUser: userAuth })
+     setCurrentUser( userAuth )
     })
   }
  
@@ -60,4 +53,8 @@ class App extends React.Component {
   
 }
 
-export default App;
+const mapDispatchToProps = dispatch => ({
+  setCurrentUser: user => dispatch(setCurrentUser(user)) 
+})
+
+export default connect(null, mapDispatchToProps)(App);

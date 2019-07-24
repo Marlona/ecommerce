@@ -1,6 +1,4 @@
-import { combineReducers } from 'redux'
-import userReducers from './user.reducer'
-
-export default combineReducers({
-    user: userReducers
+export const setCurrentUser = user => ({
+    type: 'SET_CURRENT_USER',
+    payload: user
 })
